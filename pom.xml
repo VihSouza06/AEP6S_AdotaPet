@@ -15,7 +15,7 @@
     <artifactId>aep6s</artifactId>
     <version>0.0.1</version>
     <name>aep6s</name>
-    <description>PoC AEP 6S - ODS 11 - Registro de animais para adoção</description>
+    <description>AEP 6S - ODS 11 - Registro de animais para adoção</description>
 
     <properties>
         <java.version>17</java.version>
