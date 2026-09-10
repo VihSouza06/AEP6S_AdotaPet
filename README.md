@@ -9,17 +9,17 @@ animais disponíveis para adoção. A aplicação permite cadastrar, consultar,
 atualizar e remover registros de animais, além de possibilitar a 
 filtragem por status de adoção e o registro de adoções.
 
-A solução está relacionada ao Objetivo de Desenvolvimento Sustentável (ODS) 
+O notar que abrigos e protetores independentes enfrentam dificuldades
+para centralizar e organizar as informações dos animais resgatados ou 
+abandonados que estão disponíveis para adoção. O objetivo do sistema 
+é disponibilizar uma API para organizar informações de animais 
+destinados à adoção. A aplicação centraliza os dados básicos de cada 
+animal e controla a mudança de status entre disponibilidade e adoção.
+
+A solução está alinhado ao Objetivo de Desenvolvimento Sustentável (ODS) 
 **11 — Cidades e Comunidades Sustentáveis**, ao contribuir para uma organização mais estruturada
 das informações sobre animais resgatados ou disponíveis para adoção, facilitando o gerenciamento
 desses registros por abrigos e protetores independentes.
-
-Abrigos e protetores independentes enfrentam dificuldades para centralizar e organizar as informações
-dos animais resgatados ou abandonados que estão disponíveis para adoção.
-Nesse contexto, o AdotaPet propõe uma solução inicial por meio de uma API
-que permite realizar o cadastro, a consulta e o gerenciamento desses
-animais, além de registrar de forma simples o processo de adoção.
-
 
 ## Tecnologias utilizadas
 
@@ -32,8 +32,17 @@ animais, além de registrar de forma simples o processo de adoção.
 
 ## Arquitetura do projeto
 
-O projeto foi organizado separando as responsabilidades em diferentes
-camadas:
+A aplicação utiliza uma arquitetura em camadas. O controlador recebe
+as requisições HTTP, o serviço executa as regras de negócio e o 
+repositório realiza a comunicação com o MongoDB.
+
+-   **Model:** representa os dados dos animais armazenados no MongoDB.
+-   **DTO:** representa os dados recebidos nas requisições.
+-   **Repository:** realiza a comunicação com o MongoDB.
+-   **Service:** concentra as regras de negócio.
+-   **Controller:** disponibiliza os endpoints da API.
+-   **Exception:** trata erros e respostas de validação.
+-   **Enum:** define os status de adoção.
 
 ``` text
 src
@@ -57,16 +66,6 @@ src
             ├── model
             └── service
 ```
-
-### Principais componentes
-
--   **Model:** representa os dados dos animais armazenados no MongoDB.
--   **DTO:** representa os dados recebidos nas requisições.
--   **Repository:** realiza a comunicação com o MongoDB.
--   **Service:** concentra as regras de negócio.
--   **Controller:** disponibiliza os endpoints da API.
--   **Exception:** trata erros e respostas de validação.
--   **Enum:** define os status de adoção.
 
 ## Banco de dados
 
@@ -121,6 +120,8 @@ A API disponibiliza os seguintes endpoints:
 
 
 ## Exemplo de cadastro
+Com o MongoDB e a aplicação em execução, utilize o seguinte 
+fluxo no Postman.
 
 ### POST `/animais`
 
@@ -188,9 +189,12 @@ Na versão atual da PoC, foram executados:
 ```
 
 A cobertura total registrada no relatório JaCoCo é de aproximadamente
-**94%**, ultrapassando o mínimo de 70% exigido para a primeira entrega.
+**94%**, ultrapassando o mínimo de 70% exigido. Como pode ser observado
+na imagem abaixo.
 
-O relatório pode ser encontrado após a execução dos testes em:
+![Relatório de cobertura JaCoCo](docs/imagens/cobertura_jacoco.png)
+
+O relatório também pode ser executado e encontrado **após a execução dos testes** em:
 
 ``` text
 target/site/jacoco/index.html
