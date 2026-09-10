@@ -2,24 +2,21 @@
 **Onde histórias encontram um novo começo**
 
 ## Sobre o projeto
+O **AdotaPet** é uma Prova de Conceito (PoC) desenvolvida em Java com 
+Spring Boot para facilitar o cadastro e o gerenciamento de animais 
+disponíveis para adoção.
 
-O **AdotaPet** é uma Prova de Conceito (PoC) desenvolvida em Java com
-Spring Boot, com o objetivo de facilitar o cadastro e o gerenciamento de
-animais disponíveis para adoção. A aplicação permite cadastrar, consultar,
-atualizar e remover registros de animais, além de possibilitar a 
-filtragem por status de adoção e o registro de adoções.
+A solução foi criada considerando as dificuldades enfrentadas por abrigos 
+e protetores independentes na centralização e organização das informações 
+de animais resgatados ou abandonados. Nesse contexto, a aplicação 
+disponibiliza uma API REST capaz de cadastrar, consultar, atualizar e 
+remover registros de animais, além de permitir a filtragem por status de
+adoção e o registro de novas adoções.
 
-O notar que abrigos e protetores independentes enfrentam dificuldades
-para centralizar e organizar as informações dos animais resgatados ou 
-abandonados que estão disponíveis para adoção. O objetivo do sistema 
-é disponibilizar uma API para organizar informações de animais 
-destinados à adoção. A aplicação centraliza os dados básicos de cada 
-animal e controla a mudança de status entre disponibilidade e adoção.
+A projeto está alinhado ao Objetivo de Desenvolvimento Sustentável (ODS) 
+**11 — Cidades e Comunidades Sustentáveis**, pois contribui para uma organização 
+mais eficiente de informações relacionadas ao bem-estar animal e à adoção responsável.
 
-A solução está alinhado ao Objetivo de Desenvolvimento Sustentável (ODS) 
-**11 — Cidades e Comunidades Sustentáveis**, ao contribuir para uma organização mais estruturada
-das informações sobre animais resgatados ou disponíveis para adoção, facilitando o gerenciamento
-desses registros por abrigos e protetores independentes.
 
 ## Tecnologias utilizadas
 
