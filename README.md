@@ -274,4 +274,4 @@ cobertura mínima de **70% das linhas**.
 
 ------------------------------------------------------------------------
 
-**Projeto: AdotaPet \| AEP -- Engenharia de Software 6S \| 2026.2**
+**Projeto: AdotaPet \| AEP - Engenharia de Software 6S \| 2026.2**
