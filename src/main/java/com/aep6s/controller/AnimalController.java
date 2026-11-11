@@ -1,7 +1,7 @@
 package com.aep6s.controller;
 
-import com.aep6s.dto.AdocaoRequest;
 import com.aep6s.dto.AnimalRequest;
+import com.aep6s.dto.VacinaRequest;
 import com.aep6s.enums.StatusAdocao;
 import com.aep6s.model.AnimalModel;
 import com.aep6s.service.AnimalService;
@@ -43,16 +43,26 @@ public class AnimalController {
         return ResponseEntity.ok(service.listarPorStatus(status));
     }
 
+    @GetMapping("/castrado/{castrado}")
+    public ResponseEntity<List<AnimalModel>> listarPorCastrado(@PathVariable boolean castrado) {
+        return ResponseEntity.ok(service.listarPorCastrado(castrado));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<AnimalModel> atualizar(@PathVariable String id,
-                                            @Valid @RequestBody AnimalRequest request) {
+                                                 @Valid @RequestBody AnimalRequest request) {
         return ResponseEntity.ok(service.atualizar(id, request));
     }
 
-    @PutMapping("/{id}/adotar")
-    public ResponseEntity<AnimalModel> adotar(@PathVariable String id,
-                                         @Valid @RequestBody AdocaoRequest request) {
-        return ResponseEntity.ok(service.registrarAdocao(id, request.getAdotante()));
+    @PostMapping("/{id}/vacinas")
+    public ResponseEntity<AnimalModel> adicionarVacina(@PathVariable String id,
+                                                       @Valid @RequestBody VacinaRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.adicionarVacina(id, request));
+    }
+
+    @PatchMapping("/{id}/castracao")
+    public ResponseEntity<AnimalModel> registrarCastracao(@PathVariable String id) {
+        return ResponseEntity.ok(service.registrarCastracao(id));
     }
 
     @DeleteMapping("/{id}")
@@ -61,4 +71,3 @@ public class AnimalController {
         return ResponseEntity.noContent().build();
     }
 }
-
