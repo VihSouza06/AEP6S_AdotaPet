@@ -11,5 +11,7 @@ public interface AnimalRepository extends MongoRepository<AnimalModel, String> {
     List<AnimalModel> findByStatus(StatusAdocao status);
 
     List<AnimalModel> findByEspecieIgnoreCase(String especie);
+
+    List<AnimalModel> findByCastrado(boolean castrado);
 }
 
