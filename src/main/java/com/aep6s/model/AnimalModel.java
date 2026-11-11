@@ -8,6 +8,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "animais")
 public class AnimalModel {
@@ -37,9 +39,12 @@ public class AnimalModel {
     @NotNull(message = "O status de adoção é obrigatório")
     private StatusAdocao status;
 
-    private String adotante;
+    private boolean castrado;
+    private LocalDate dataCastracao;
 
     private LocalDate dataCadastro;
+
+    private List<Vacina> vacinas = new ArrayList<>();
 
     public AnimalModel() {
         this.status = StatusAdocao.DISPONIVEL;
@@ -58,14 +63,25 @@ public class AnimalModel {
         this.descricao = descricao;
     }
 
-    public void marcarComoAdotado(String nomeAdotante) {
+    public void marcarComoAdotado() {
         this.status = StatusAdocao.ADOTADO;
-        this.adotante = nomeAdotante;
     }
 
     public void marcarComoDisponivel() {
         this.status = StatusAdocao.DISPONIVEL;
-        this.adotante = null;
+    }
+
+    public void registrarCastracao() {
+        this.castrado = true;
+        this.dataCastracao = LocalDate.now();
+    }
+
+    public boolean estaAdotado() {
+        return this.status == StatusAdocao.ADOTADO;
+    }
+
+    public void adicionarVacina(Vacina vacina) {
+        this.vacinas.add(vacina);
     }
 
     // Getters e setters
@@ -142,12 +158,20 @@ public class AnimalModel {
         this.status = status;
     }
 
-    public String getAdotante() {
-        return adotante;
+    public boolean isCastrado() {
+        return castrado;
     }
 
-    public void setAdotante(String adotante) {
-        this.adotante = adotante;
+    public void setCastrado(boolean castrado) {
+        this.castrado = castrado;
+    }
+
+    public LocalDate getDataCastracao() {
+        return dataCastracao;
+    }
+
+    public void setDataCastracao(LocalDate dataCastracao) {
+        this.dataCastracao = dataCastracao;
     }
 
     public LocalDate getDataCadastro() {
@@ -156,5 +180,13 @@ public class AnimalModel {
 
     public void setDataCadastro(LocalDate dataCadastro) {
         this.dataCadastro = dataCadastro;
+    }
+
+    public List<Vacina> getVacinas() {
+        return vacinas;
+    }
+
+    public void setVacinas(List<Vacina> vacinas) {
+        this.vacinas = vacinas == null ? new ArrayList<>() : vacinas;
     }
 }
