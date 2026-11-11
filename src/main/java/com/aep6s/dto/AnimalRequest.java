@@ -1,7 +1,10 @@
 package com.aep6s.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
+
+import java.util.List;
 
 public class AnimalRequest {
 
@@ -23,6 +26,11 @@ public class AnimalRequest {
     private String sexo;
 
     private String descricao;
+
+    private Boolean castrado;
+
+    @Valid
+    private List<VacinaRequest> vacinas;
 
     public String getNome() {
         return nome;
@@ -79,5 +87,20 @@ public class AnimalRequest {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
-}
 
+    public Boolean getCastrado() {
+        return castrado;
+    }
+
+    public void setCastrado(Boolean castrado) {
+        this.castrado = castrado;
+    }
+
+    public List<VacinaRequest> getVacinas() {
+        return vacinas;
+    }
+
+    public void setVacinas(List<VacinaRequest> vacinas) {
+        this.vacinas = vacinas;
+    }
+}
