@@ -2,21 +2,22 @@
 **Onde histórias encontram um novo começo**
 
 ## Sobre o projeto
-O **AdotaPet** é uma Prova de Conceito (PoC) desenvolvida em Java com 
-Spring Boot para facilitar o cadastro e o gerenciamento de animais 
-disponíveis para adoção.
 
-A solução foi criada considerando as dificuldades enfrentadas por abrigos 
-e protetores independentes na centralização e organização das informações 
-de animais resgatados ou abandonados. Nesse contexto, a aplicação 
-disponibiliza uma API REST capaz de cadastrar, consultar, atualizar e 
-remover registros de animais, além de permitir a filtragem por status de
-adoção e o registro de novas adoções.
+O **AdotaPet** é uma API REST desenvolvida para apoiar o cadastro e o
+gerenciamento de animais disponíveis para adoção. A aplicação organiza
+informações dos animais, dos possíveis adotantes e dos registros de
+adoção.
 
-A projeto está alinhado ao Objetivo de Desenvolvimento Sustentável (ODS) 
-**11 — Cidades e Comunidades Sustentáveis**, pois contribui para uma organização 
-mais eficiente de informações relacionadas ao bem-estar animal e à adoção responsável.
+Na segunda versão, a estrutura foi ampliada: além da coleção de animais,
+foram implementadas coleções próprias para adotantes e adoções. Também
+foram adicionados subdocumentos para armazenar endereços e informações
+de vacinação, além de funcionalidades relacionadas à castração.
 
+O projeto é uma aplicação acadêmica desenvolvida com Java e Spring Boot
+e utiliza o MongoDB para persistência dos dados. Sua proposta está
+relacionada ao **ODS 11 — Cidades e Comunidades Sustentáveis**,
+pois contribui para uma organização mais eficiente de informações 
+relacionadas ao bem-estar animal e à adoção responsável.
 
 ## Tecnologias utilizadas
 
@@ -24,8 +25,8 @@ mais eficiente de informações relacionadas ao bem-estar animal e à adoção r
 - Spring Boot 3 (Web, Data MongoDB, Validation)
 - MongoDB
 - Maven
-- JUnit 5 + Mockito (testes)
-- JaCoCo (cobertura de testes)
+- JUnit 5 e Mockito 
+- JaCoCo 
 
 ## Arquitetura do projeto
 
@@ -63,31 +64,60 @@ src
             ├── model
             └── service
 ```
-
 ## Banco de dados
 
-A aplicação utiliza **MongoDB**, um banco de dados NoSQL. Ultilizamos uma única coleção
-NoSQL, com objetos homogêneos e estrutura simples. Os dados de adoção
-(status e nome do adotante) ficam embutidos como campos simples no próprio
-documento do animal.
+A aplicação utiliza o **MongoDB** (NoSQL), banco `adotapet`, com **múltiplas
+coleções relacionadas** e **documentos complexos** (listas de subdocumentos).
 
-Banco utilizado:
+| Coleção | Conteúdo | Tipo de dado |
+|---|---|---|
+| `animais` | dados do animal, status e **lista embutida de vacinas** | documento complexo |
+| `adotantes` | dados do adotante e **lista embutida de endereços** | documento complexo |
+| `adocoes` | vínculo entre um animal e um adotante (ids), data e observações | relacionamento entre coleções |
 
-``` text
-adotapet
-```
 
-Coleção:
+## Endpoints
 
-``` text
-animais
-```
+### Animais — `/animais`
 
-Exemplo de documento:
+| Método | Rota | Descrição |
+|---|---|---|
+| POST   | `/animais` | Cadastrar animal (pode incluir `vacinas`) |
+| GET    | `/animais` | Listar todos |
+| GET    | `/animais/{id}` | Buscar por id |
+| GET    | `/animais/status/{status}` | Listar por status (`DISPONIVEL`/`ADOTADO`) |
+| GET    | `/animais/castrado/{true\|false}` | Listar animais castrados ou não castrados |
+| PATCH  | `/animais/{id}/castracao` | Registrar a castração do animal (grava a data) |
+| PUT    | `/animais/{id}` | Atualizar dados do animal |
+| POST   | `/animais/{id}/vacinas` | Adicionar uma vacina ao animal |
+| DELETE | `/animais/{id}` | Remover (não permitido se estiver adotado) |
+
+### Adotantes — `/adotantes`
+
+| Método | Rota | Descrição |
+|---|---|---|
+| POST   | `/adotantes` | Cadastrar adotante com endereços |
+| GET    | `/adotantes` | Listar todos |
+| GET    | `/adotantes/{id}` | Buscar por id |
+| PUT    | `/adotantes/{id}` | Atualizar adotante |
+| DELETE | `/adotantes/{id}` | Remover (não permitido se tiver adoções) |
+
+### Adoções — `/adocoes`
+
+| Método | Rota | Descrição |
+|---|---|---|
+| POST   | `/adocoes` | Registrar adoção (`animalId` + `adotanteId`) |
+| GET    | `/adocoes` | Listar todas |
+| GET    | `/adocoes/{id}` | Buscar por id |
+| GET    | `/adocoes/adotante/{adotanteId}` | Listar adoções de um adotante |
+| DELETE | `/adocoes/{id}` | Cancelar adoção (o animal volta a `DISPONIVEL`) |
+
+## Exemplo de fluxo completo 
+
+**1. POST `/animais`**
 
 ``` json
 {
-  "_id": "id-do-animal",
   "nome": "Thor",
   "especie": "Cachorro",
   "raca": "Golden Retriever",
@@ -95,121 +125,88 @@ Exemplo de documento:
   "porte": "Grande",
   "sexo": "Macho",
   "descricao": "Cachorro dócil e brincalhão",
-  "status": "DISPONIVEL",
-  "adotante": null,
-  "dataCadastro": "2026-09-09"
+  "castrado": false,
+  "vacinas": [
+    { "nome": "V10", "dataAplicacao": "2026-08-15", "observacao": "Primeira dose" }
+  ]
 }
 ```
 
-## Endpoints
-
-A API disponibiliza os seguintes endpoints:
-
-| Método | Rota                  | Descrição                                   |
-|--------|------------------------|----------------------------------------------|
-| POST   | `/animais`             | Cadastrar um novo animal                      |
-| GET    | `/animais`              | Listar todos os animais                       |
-| GET    | `/animais/{id}`         | Buscar um animal por id                       |
-| GET    | `/animais/status/{status}` | Listar por status (`DISPONIVEL`/`ADOTADO`) |
-| PUT    | `/animais/{id}`         | Atualizar os dados de um animal               |
-| PUT    | `/animais/{id}/adotar`  | Registrar a adoção (nome do adotante)         |
-| DELETE | `/animais/{id}`         | Remover um animal                             |
-
-
-## Exemplo de cadastro
-Com o MongoDB e a aplicação em execução, utilize o seguinte 
-fluxo no Postman.
-
-### POST `/animais`
+**2. POST `/adotantes`**
 
 ``` json
 {
-  "nome": "Thor",
-  "especie": "Cachorro",
-  "raca": "Golden Retriever",
-  "idade": 3,
-  "porte": "Grande",
-  "sexo": "Macho",
-  "descricao": "Cachorro dócil e brincalhão"
+  "nome": "Maria Silva",
+  "email": "maria@email.com",
+  "telefone": "44999990000",
+  "enderecos": [
+    { "rua": "Rua A", "numero": "100", "cidade": "Maringá", "estado": "PR" }
+  ]
 }
 ```
 
-Após o cadastro, o sistema define automaticamente o status como
-`DISPONIVEL` e registra a data de cadastro.
-
-## Exemplo de adoção
-
-### PUT `/animais/{id}/adotar`
+**3. POST `/adocoes`** (use os ids retornados nos passos 1 e 2)
 
 ``` json
 {
-  "adotante": "Maria Silva"
+  "animalId": "id-do-animal",
+  "adotanteId": "id-do-adotante",
+  "observacoes": "Visita ao novo lar realizada"
 }
 ```
 
-Quando a adoção é registrada, o status do animal é alterado para:
+Para registrar a castração depois, use `PATCH /animais/{id}/castracao`.
 
-``` text
-ADOTADO
+Após o passo 3 o animal passa para o status `ADOTADO`. Para desfazer,
+use `DELETE /adocoes/{id}`.
+
+## Regras de negócio
+
+A aplicação possui regras para manter a consistência dos registros:
+
+- Não permitir cadastro de adotantes com e-mails duplicados.
+- Não permitir remover adotantes que possuam adoções registradas.
+- Não permitir remover animais que estejam adotados.
+- Não permitir registrar uma nova adoção para um animal já adotado.
+- Verificar a existência do animal e do adotante antes de registrar uma adoção.
+- Ao cancelar uma adoção, retornar o animal ao status disponível.
+- Validar os dados obrigatórios e os formatos recebidos nas requisições.
+
+## Testes automatizados
+
+O projeto possui testes organizados em três grupos principais:
+
+- **Models:** verificam o comportamento dos modelos e subdocumentos.
+- **Services:** verificam as regras de negócio.
+- **Controllers:** verificam os endpoints da API.
+
+Para executar os testes no Windows:
+
+```bash
+mvnw.cmd clean verify
 ```
-
-e o nome do adotante é armazenado no registro.
-
-Um animal que já esteja adotado não pode ser adotado novamente.
-
-## Validação e tratamento de erros
-
-A API utiliza validações para evitar dados inválidos, como:
-
--   Nome do animal obrigatório;
--   Espécie obrigatória;
--   Porte obrigatório;
--   Sexo obrigatório;
--   Idade não pode ser negativa;
--   Nome do adotante obrigatório ao registrar uma adoção.
-
-Também existem tratamentos para situações como:
-
--   Animal não encontrado: `404 Not Found`;
--   Animal já adotado: `409 Conflict`;
--   Dados inválidos: `400 Bad Request`.
 
 ## Cobertura dos testes
 
 Na versão atual da PoC, foram executados:
 
 ``` text
-22 testes
+94 testes
 0 falhas
 0 erros
-0 testes ignorados
 ```
 
 A cobertura total registrada no relatório JaCoCo é de aproximadamente
-**94%**, ultrapassando o mínimo de 70% exigido. Como pode ser observado
+**99%**, ultrapassando o mínimo de 70% exigido. Como pode ser observado
 na imagem abaixo.
 
-![Relatório de cobertura JaCoCo](docs/imagens/cobertura_jacoco.png)
+![Relatório de cobertura JaCoCo](docs/imagens/coberturaJacoco_2Versao.png)
 
 O relatório também pode ser executado e encontrado **após a execução dos testes** em:
 
 ``` text
 target/site/jacoco/index.html
 ```
-
-## Testes implementados
-
-Os testes estão organizados por responsabilidade:
-
-``` text
-AnimalControllerTest
-AnimalModelTest
-AnimalServiceTest
-Aep6sApplicationTests
-```
-
-Eles verificam funcionalidades relacionadas ao cadastro, consulta,
-atualização, remoção, adoção, validações e regras de negócio da PoC.
 
 ## Como executar o projeto
 
@@ -218,9 +215,7 @@ atualização, remoção, adoção, validações e regras de negócio da PoC.
 Instale:
 
 -   Java 17;
--   Maven;
 -   MongoDB local;
-
 
 ### 1. Clonar o repositório
 
@@ -250,27 +245,11 @@ mvnw.cmd spring-boot:run
 A API será executada na porta configurada no arquivo
 `application.properties`.
 
-## Como executar os testes
+## Documentação complementar
 
-Para executar os testes:
-
-``` bash
-mvnw.cmd test
-```
-
-Para executar os testes e gerar o relatório de cobertura:
-
-``` bash
-mvnw.cmd clean test
-```
-### Se preferir rodar pela IntelliJ
-Use o painel Maven.
-No lado direito da IDEA tem uma aba `Maven`. 
-Expanda `Lifecycle` > dê duplo clique em `test`.
-Isso executa o mesmo ciclo do mvn clean test.
-
-O projeto possui uma verificação do JaCoCo configurada para exigir
-cobertura mínima de **70% das linhas**.
+- [Documentação Técnica](docs/documentacao-tecnica.md)
+- [Metodologia Kanban](docs/metodologia-kanban.md)
+- [Quadro de atividades — GitHub Projects](https://github.com/users/VihSouza06/projects/1/views/1)
 
 ------------------------------------------------------------------------
 
